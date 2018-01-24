@@ -21,3 +21,5 @@ console.log(e.text());
 //result: 
 //0.5
 ```            
+
+Known Issues on degree option for tan(±n*90), cos(±n*90), sin(±n*90)
