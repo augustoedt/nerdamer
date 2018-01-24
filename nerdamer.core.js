@@ -75,7 +75,9 @@ var nerdamer = (function(imports) {
             //Print out warnings or not
             SILENCE_WARNINGS: false,
             //Precision
-            PRECISION: 40
+            PRECISION: 40,
+            //Angle unit default 'radian'
+            ANGLE_UNIT: 'rad'
         },
         
         //Container for custom operators
@@ -836,9 +838,27 @@ var nerdamer = (function(imports) {
         //I really don't like touching objects which aren't mine hence the reason for Math2. The names of the 
         //functions within are pretty self-explanatory.
         Math2 = {
-            csc: function(x) { return 1/Math.sin(x); },
-            sec: function(x) { return 1/Math.cos(x); },
-            cot: function(x) { return 1/Math.tan(x); },
+            csc: function(x) {
+                    if(Settings.ANGLE_UNIT=='rad'){
+                        return 1/Math.sin(x);
+                    }else{                        
+                        return 1/Math.sin(Math.PI/180*x);
+                    }
+                },
+            sec: function(x) {
+                    if(Settings.ANGLE_UNIT=='rad'){
+                        return 1/Math.cos(x);                        
+                    }else{
+                        return 1/Math.cos(Math.PI/180*x);
+                    }
+                },
+            cot: function(x) {
+                    if(Settings.ANGLE_UNIT=='rad'){
+                        return 1/Math.tan(x);                        
+                    }else{
+                        return 1/Math.tan(Math.PI/180*x);
+                    }
+                },
             // https://gist.github.com/jiggzson/df0e9ae8b3b06ff3d8dc2aa062853bd8
             erf: function(x) {
                 var t = 1/(1+0.5*Math.abs(x));
@@ -3550,8 +3570,13 @@ var nerdamer = (function(imports) {
                 if(Settings.PARSE2NUMBER) { 
                     if(symbol.equals(new Symbol(Math.PI/2)))
                         return new Symbol(0);
-                    if(symbol.isConstant()) 
-                        return new Symbol(Math.cos(symbol.valueOf()));
+                    if(symbol.isConstant()){
+                        if(Settings.ANGLE_UNIT=='rad'){
+                            return new Symbol(Math.cos(symbol.valueOf()));
+                        }else{
+                            return new Symbol(Math.cos(Math.PI/180*symbol.valueOf()));
+                        }
+                    }
                     if(symbol.isImaginary()) {
                         return complex.evaluate(symbol, 'cos');
                     }
@@ -3594,8 +3619,13 @@ var nerdamer = (function(imports) {
             },
             sin: function(symbol) { 
                 if(Settings.PARSE2NUMBER) {
-                    if(symbol.isConstant()) 
-                        return new Symbol(Math.sin(symbol.valueOf()));
+                    if(symbol.isConstant()){
+                        if(Settings.ANGLE_UNIT=='rad'){
+                            return new Symbol(Math.sin(symbol.valueOf()));
+                        }else{
+                            return new Symbol(Math.sin(Math.PI/180*symbol.valueOf()));
+                        }
+                    }
                     if(symbol.isImaginary()) 
                         return complex.evaluate(symbol, 'sin');
                 }
@@ -3642,8 +3672,13 @@ var nerdamer = (function(imports) {
             },
             tan: function(symbol) {
                 if(Settings.PARSE2NUMBER) {
-                    if(symbol.isConstant())
-                        return new Symbol(Math.tan(symbol.valueOf()));
+                    if(symbol.isConstant()){
+                        if(Settings.ANGLE_UNIT=='rad'){
+                            return new Symbol(Math.sin(symbol.valueOf()));
+                        }else{
+                            return new Symbol(Math.sin(Math.PI/180*symbol.valueOf()));
+                        }
+                    }
                     if(symbol.isImaginary()) 
                         return complex.evaluate(symbol, 'tan');
                 }
